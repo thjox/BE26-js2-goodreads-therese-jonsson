@@ -1,0 +1,39 @@
+export const baseURL =
+  "https://goodread-2dc1a-default-rtdb.europe-west1.firebasedatabase.app/books";
+
+//GET
+export async function getAllBooks() {
+  try {
+    const response = await fetch(baseURL + ".json");
+    if (!response.ok) {
+      throw new Error("Fetching books failed");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+//POST
+export async function addBook(book) {
+  try {
+    const option = {
+      method: "POST",
+      body: JSON.stringify(book),
+      headers: { "Content-type": "application/json" },
+    };
+    const response = await fetch(baseURL + ".json", option);
+    if (!response.ok) {
+      throw new Error("Post failed!");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
+}
+//PATCH/PUT
+//DELETE

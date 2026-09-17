@@ -5,6 +5,7 @@ export class Book {
   #isRead;
   #score;
 
+  //skapar en ny Book-instans
   constructor(id, title, author, isRead, score) {
     this.#id = id;
     this.#title = title;
@@ -13,6 +14,7 @@ export class Book {
     this.#score = score;
   }
 
+  //Getters som ger tillgång till de privata värdena.
   getId() {
     return this.#id;
   }
@@ -32,10 +34,16 @@ export class Book {
     return this.#score;
   }
 
+  //Ändrar bokens status till läst/oläst, tar bort betyg om boken markeras som oläst.
   doneRead() {
     this.#isRead = !this.#isRead;
+
+    if (!this.#isRead) {
+      this.#score = undefined;
+    }
   }
 
+  //Sätter betyg om boken markeras som läst
   setScore(score) {
     if (this.#isRead) {
       this.#score = score;

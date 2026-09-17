@@ -1,7 +1,7 @@
 export const baseURL =
   "https://goodread-2dc1a-default-rtdb.europe-west1.firebasedatabase.app/books";
 
-//GET
+//GET - hämtar all data från Firebase
 export async function getAllBooks() {
   try {
     const response = await fetch(baseURL + ".json");
@@ -16,7 +16,7 @@ export async function getAllBooks() {
   }
 }
 
-//POST
+//POST - lägger till ny data i Firebase
 export async function addBook(book) {
   try {
     const option = {
@@ -35,5 +35,36 @@ export async function addBook(book) {
     throw error;
   }
 }
-//PATCH/PUT
-//DELETE
+//PATCH - uppdaterar en specifik bok från Firebase
+
+export async function updateBook(id, updates) {
+  const options = {
+    method: "PATCH",
+    body: JSON.stringify(updates),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  const response = await fetch(`${baseURL}/${id}.json`, options);
+
+  if (!response.ok) {
+    throw new Error("Updating book failed");
+  }
+
+  return await response.json();
+}
+
+//DELETE - Tar bort bok från Firebase
+
+export async function deleteBook(id) {
+  const options = {
+    method: "DELETE",
+  };
+
+  const response = await fetch(`${baseURL}/${id}.json`, options);
+
+  if (!response.ok) {
+    throw new Error("Deleting book failed!");
+  }
+}

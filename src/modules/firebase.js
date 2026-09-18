@@ -1,7 +1,6 @@
 export const baseURL =
   "https://goodread-2dc1a-default-rtdb.europe-west1.firebasedatabase.app/books";
 
-//GET - hämtar all data från Firebase
 export async function getAllBooks() {
   try {
     const response = await fetch(baseURL + ".json");
@@ -16,7 +15,6 @@ export async function getAllBooks() {
   }
 }
 
-//POST - lägger till ny data i Firebase
 export async function addBook(book) {
   try {
     const option = {
@@ -35,7 +33,6 @@ export async function addBook(book) {
     throw error;
   }
 }
-//PATCH - uppdaterar en specifik bok från Firebase
 
 export async function updateBook(id, updates) {
   const options = {
@@ -54,8 +51,6 @@ export async function updateBook(id, updates) {
 
   return await response.json();
 }
-
-//DELETE - Tar bort bok från Firebase
 
 export async function deleteBook(id) {
   const options = {

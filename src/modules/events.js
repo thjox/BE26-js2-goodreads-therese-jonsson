@@ -24,7 +24,7 @@ form.addEventListener("submit", async (event) => {
   try {
     const response = await addBook(bookData);
 
-    // Add the local Book instance only after Firebase has succeeded.
+    // The local book is added only after Firebase has saved it successfully.
     addBookToLocalList(response.name, bookData);
 
     renderBooks(books);
@@ -44,13 +44,16 @@ booksContainer.addEventListener("click", async (event) => {
     if (!book) return;
 
     const nextIsRead = !book.getIsRead();
+
+    // Firebase removes the score property when its value is null.
     const updates = nextIsRead
       ? { isRead: true }
       : { isRead: false, score: null };
 
     try {
-      // Update Firebase first. The local object is changed only after success.
+      // Local state is changed only after Firebase has updated successfully.
       await updateBook(book.getId(), updates);
+
       book.doneRead();
       renderBooks(books);
     } catch (error) {
@@ -67,8 +70,8 @@ booksContainer.addEventListener("click", async (event) => {
     if (!book || !book.getIsRead()) return;
 
     try {
-      // Persist the score first so the local object cannot become out of sync.
       await updateBook(book.getId(), { score });
+
       book.setScore(score);
       renderBooks(books);
     } catch (error) {
@@ -81,8 +84,8 @@ booksContainer.addEventListener("click", async (event) => {
     const id = event.target.dataset.id;
 
     try {
-      // Remove the local book only after Firebase has deleted it successfully.
       await deleteBook(id);
+
       removeBook(id);
       renderBooks(books);
     } catch (error) {

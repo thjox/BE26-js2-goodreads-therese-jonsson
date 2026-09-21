@@ -51,7 +51,6 @@ booksContainer.addEventListener("click", async (event) => {
       : { isRead: false, score: null };
 
     try {
-      // Local state is changed only after Firebase has updated successfully.
       await updateBook(book.getId(), updates);
 
       book.doneRead();

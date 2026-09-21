@@ -54,7 +54,7 @@ För att köra projektet lokalt behöver Node.js och npm finnas installerat.
 1. Klona projektet:
 
 ```bash
-git clone <https://github.com/thjox/BE26-js2-goodreads-therese-jonsson>
+git clone
 ```
 
 2. Gå in i projektmappen:

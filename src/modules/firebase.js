@@ -1,4 +1,4 @@
-export const baseURL =
+const baseURL =
   "https://goodread-2dc1a-default-rtdb.europe-west1.firebasedatabase.app/books";
 
 export async function getAllBooks() {
@@ -20,7 +20,7 @@ export async function addBook(book) {
     const option = {
       method: "POST",
       body: JSON.stringify(book),
-      headers: { "Content-type": "application/json" },
+      headers: { "Content-Type": "application/json" },
     };
     const response = await fetch(baseURL + ".json", option);
     if (!response.ok) {

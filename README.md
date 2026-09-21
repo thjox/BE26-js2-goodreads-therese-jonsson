@@ -54,13 +54,13 @@ För att köra projektet lokalt behöver Node.js och npm finnas installerat.
 1. Klona projektet:
 
 ```bash
-git clone
+git clone https://github.com/thjox/BE26-js2-goodreads-therese-jonsson
 ```
 
 2. Gå in i projektmappen:
 
 ```bash
-cd <projectmapp>
+cd projectmapp
 ```
 
 3. Installera projektets dependencies:
@@ -76,3 +76,9 @@ npm run dev
 ```
 
 5. Öppna adressen som Vite visar i terminalen i webbläsaren.
+
+## Live demo
+
+Projektet är publicerat på Netlify:
+
+https://thjoxgoodreads.netlify.app/

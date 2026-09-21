@@ -12,72 +12,83 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const bookData = {
-    title: titleInput.value,
-    author: authorInput.value,
+    title: titleInput.value.trim(),
+    author: authorInput.value.trim(),
     isRead: false,
   };
 
-  const response = await addBook(bookData);
+  if (!bookData.title || !bookData.author) {
+    return;
+  }
 
-  addBookToLocalList(response.name, bookData);
+  try {
+    const response = await addBook(bookData);
 
-  renderBooks(books);
-  form.reset();
+    // Add the local Book instance only after Firebase has succeeded.
+    addBookToLocalList(response.name, bookData);
+
+    renderBooks(books);
+    form.reset();
+  } catch (error) {
+    console.error("Could not add book:", error);
+    alert("Det gick inte att lägga till boken. Försök igen.");
+  }
 });
 
 // Event delegation keeps one listener on the container as book buttons are re-rendered.
 booksContainer.addEventListener("click", async (event) => {
-  //
   if (event.target.classList.contains("read-button")) {
     const id = event.target.dataset.id;
+    const book = books.find((book) => book.getId() === id);
 
-    const book = books.find((book) => {
-      return book.getId() === id;
-    });
+    if (!book) return;
 
-    book.doneRead();
+    const nextIsRead = !book.getIsRead();
+    const updates = nextIsRead
+      ? { isRead: true }
+      : { isRead: false, score: null };
 
-    if (book.getIsRead()) {
-      await updateBook(book.getId(), {
-        isRead: true,
-      });
-    } else {
-      // Firebase removes the score property when its value is set to null.
-      await updateBook(book.getId(), {
-        isRead: false,
-        score: null,
-      });
+    try {
+      // Update Firebase first. The local object is changed only after success.
+      await updateBook(book.getId(), updates);
+      book.doneRead();
+      renderBooks(books);
+    } catch (error) {
+      console.error("Could not update read status:", error);
+      alert("Det gick inte att uppdatera bokens status. Försök igen.");
     }
-
-    renderBooks(books);
   }
 
   if (event.target.classList.contains("score-button")) {
     const id = event.target.dataset.id;
-
     const score = Number(event.target.dataset.score);
+    const book = books.find((book) => book.getId() === id);
 
-    const book = books.find((book) => {
-      return book.getId() === id;
-    });
+    if (!book || !book.getIsRead()) return;
 
-    book.setScore(score);
-
-    await updateBook(book.getId(), {
-      score: book.getScore(),
-    });
-
-    renderBooks(books);
+    try {
+      // Persist the score first so the local object cannot become out of sync.
+      await updateBook(book.getId(), { score });
+      book.setScore(score);
+      renderBooks(books);
+    } catch (error) {
+      console.error("Could not update score:", error);
+      alert("Det gick inte att spara betyget. Försök igen.");
+    }
   }
 
   if (event.target.classList.contains("delete-button")) {
     const id = event.target.dataset.id;
 
-    await deleteBook(id);
-
-    removeBook(id);
-
-    renderBooks(books);
+    try {
+      // Remove the local book only after Firebase has deleted it successfully.
+      await deleteBook(id);
+      removeBook(id);
+      renderBooks(books);
+    } catch (error) {
+      console.error("Could not delete book:", error);
+      alert("Det gick inte att ta bort boken. Försök igen.");
+    }
   }
 });
 
@@ -88,6 +99,7 @@ function searchBooks(searchText) {
       book.getAuthor().toLowerCase().includes(searchText.toLowerCase())
     );
   });
+
   if (filteredBooks.length === 0) {
     booksContainer.innerHTML = "<p>Inga böcker hittades.</p>";
     return;
@@ -95,6 +107,7 @@ function searchBooks(searchText) {
 
   renderBooks(filteredBooks);
 }
+
 searchInput.addEventListener("input", () => {
   searchBooks(searchInput.value);
 });
